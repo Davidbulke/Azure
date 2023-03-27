@@ -1,0 +1,33 @@
+---
+- name: Deploy Azure Arc Bridge to Azure Stack HCI
+  hosts: localhost
+  connection: local
+  vars:
+    resource_group_name: "<Resource Group Name>"
+    location: "<Location>"
+    arc_bridge_name: "<Azure Arc Bridge Name>"
+    subscription_id: "<Subscription ID>"
+  tasks:
+  - name: Create resource group
+    azure_rm_resourcegroup:
+      name: "{{ resource_group_name }}"
+      location: "{{ location }}"
+  - name: Create Azure Arc Bridge resource
+    azure_rm_resource:
+      group: "{{ resource_group_name }}"
+      name: "{{ arc_bridge_name }}"
+      location: "{{ location }}"
+      kind: "AzureArcExtensionForWindows"
+      properties:
+        publisher: "Microsoft.Azure.Arc"
+        type: "AzureArcAgent"
+        typeHandlerVersion: "1.0"
+        autoUpgradeMinorVersion: "true"
+        settings:
+          subscriptionId: "{{ subscription_id }}"
+          resourceGroupName: "{{ resource_group_name }}"
+          location: "{{ location }}"
+  - name: Add Azure Arc Bridge to Azure Stack HCI cluster
+    shell: "Add-ClusterResource -Name {{ arc_bridge_name }} -ResourceType 'Virtual Machine Extension' -Group {{ resource_group_name }} -Cluster (Get-Cluster)"
+    args:
+      executable: powershell.exe
