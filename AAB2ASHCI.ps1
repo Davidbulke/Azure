@@ -1,4 +1,4 @@
-# Powershell script for Azure Arc Bridge deployment to Azure Stack HCI with Azure Stack HCI #
+# Powershell script for Azure Arc Bridge deployment in Azure Stack HCI #
 -----------------------------------------------------------------------------------------------
 # Assuming the app is running as a containerised application.
 
